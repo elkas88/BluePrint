@@ -84,9 +84,9 @@ action:
             #link content of drop down menu with web radio stations
             media_content_id: >
               {% set station = states(_radio_station) %}
-              {% if station == "SRF 1" %} {{ _radio_id_srf1 }}
-              {% elif station == "SRF 3" %} {{ _radio_id_srf3 }} 
-              {% elif station == "FM 1" %} {{ _radio_id_fm1 }} 
+              {% if station == "SRF1" %} {{ _radio_id_srf1 }}
+              {% elif station == "SRF3" %} {{ _radio_id_srf3 }} 
+              {% elif station == "FM1" %} {{ _radio_id_fm1 }} 
               {% endif %} 
             media_content_type: music
 
@@ -122,8 +122,8 @@ action:
             #link content of drop down menu with web radio stations
             media_content_id: >
               {% set station = states(_radio_station) %}
-              {% if station == "SRF 1" %} {{ _radio_id_srf1 }}
-              {% elif station == "SRF 3" %} {{ _radio_id_srf3 }} 
-              {% elif station == "FM 1" %} {{ _radio_id_fm1 }} 
+              {% if station == "SRF1" %} {{ _radio_id_srf1 }}
+              {% elif station == "SRF3" %} {{ _radio_id_srf3 }} 
+              {% elif station == "FM1" %} {{ _radio_id_fm1 }} 
               {% endif %} 
             media_content_type: music
