@@ -45,9 +45,9 @@ variables:
   _radio_station: !input radio_stations
 
   #set your radio id's as variables
+  _radio_id_srf1: media-source://radio_browser/964963c1-0601-11e8-ae97-52543be04c81
   _radio_id_srf3: media-source://radio_browser/961f1da4-0601-11e8-ae97-52543be04c81
-  _radio_id_vintage: media-source://radio_browser/962af9b5-0601-11e8-ae97-52543be04c81
-  _radio_id_indie: media-source://radio_browser/51895bd4-f369-11e8-a471-52543be04c81
+  _radio_id_fm1: media-source://radio_browser/3786ca1c-bcbd-4c90-8ce2-6e363756b320
 
 
 trigger:
@@ -84,9 +84,9 @@ action:
             #link content of drop down menu with web radio stations
             media_content_id: >
               {% set station = states(_radio_station) %}
-              {% if station == "SRF3" %} {{ _radio_id_srf3 }}
-              {% elif station == "Vintage" %} {{ _radio_id_vintage }} 
-              {% elif station == "Indie" %} {{ _radio_id_indie }} 
+              {% if station == "SRF 1" %} {{ _radio_id_srf1 }}
+              {% elif station == "SRF 3" %} {{ _radio_id_srf3 }} 
+              {% elif station == "FM 1" %} {{ _radio_id_fm1 }} 
               {% endif %} 
             media_content_type: music
 
@@ -122,8 +122,8 @@ action:
             #link content of drop down menu with web radio stations
             media_content_id: >
               {% set station = states(_radio_station) %}
-              {% if station == "SRF3" %} {{ _radio_id_srf3 }}
-              {% elif station == "Vintage" %} {{ _radio_id_vintage }} 
-              {% elif station == "Indie" %} {{ _radio_id_indie }} 
+              {% if station == "SRF 1" %} {{ _radio_id_srf1 }}
+              {% elif station == "SRF 3" %} {{ _radio_id_srf3 }} 
+              {% elif station == "FM 1" %} {{ _radio_id_fm1 }} 
               {% endif %} 
             media_content_type: music
