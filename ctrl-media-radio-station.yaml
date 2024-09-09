@@ -1,0 +1,129 @@
+blueprint:
+  name: Stream web radio to media player
+  description: Stream web radio from Home Assistant to Sonos media player.
+  domain: automation
+  input:
+    target_player:
+      name: Sonos Player
+      description: The media player that shall be controlled.
+      selector:
+        entity:
+          domain: media_player
+    radio_stations:
+      name: Radio Stations
+      description: The drop down list of radio stations (create over helpers)
+      selector:
+        entity:
+          domain: input_select
+    switch_player:
+      name: Switch On/Off 
+      description: Switch the radio/media player on or off (create over helpers)
+      selector:
+        entity:
+          domain: input_boolean
+    initial_volume:
+      name: Initial volume
+      description: Initial value for player on, from 10% to 100%.
+      selector:
+        number:
+          min: 10
+          max: 100
+          step: 1
+          unit_of_measurement: '%'
+          mode: slider
+      default: 20
+
+
+# no matched condition stops repeat sequence to stop dimming (dimm 0)
+mode: restart
+max_exceeded: silent
+
+variables:
+  _initial_volume: !input initial_volume
+  _media_player: !input target_player
+  _switch_player: !input switch_player
+  _radio_station: !input radio_stations
+
+  #set your radio id's as variables
+  _radio_id_srf3: media-source://radio_browser/961f1da4-0601-11e8-ae97-52543be04c81
+  _radio_id_vintage: media-source://radio_browser/962af9b5-0601-11e8-ae97-52543be04c81
+  _radio_id_indie: media-source://radio_browser/51895bd4-f369-11e8-a471-52543be04c81
+
+
+trigger:
+  - platform: state
+    entity_id: !input switch_player
+    id: "switch_on_off"
+  - platform: state
+    entity_id: !input radio_stations
+    id: "change"
+
+action:
+  - choose:
+    # TURN ON by input_boolean
+    - conditions:
+        condition: and
+        conditions:
+          - condition: trigger
+            id: "switch_on_off"
+          - "{{ is_state(_switch_player, 'on') }}"
+      sequence:
+        - service: media_player.clear_playlist
+          data: {}
+          target:
+            entity_id: !input target_player
+        - service: media_player.volume_set
+          data:
+            volume_level: '{{ (_initial_volume | float) / 100 }}'
+          target:
+            entity_id: !input target_player 
+        - service: media_player.play_media
+          target: 
+            entity_id: !input target_player
+          data:
+            #link content of drop down menu with web radio stations
+            media_content_id: >
+              {% set station = states(_radio_station) %}
+              {% if station == "SRF3" %} {{ _radio_id_srf3 }}
+              {% elif station == "Vintage" %} {{ _radio_id_vintage }} 
+              {% elif station == "Indie" %} {{ _radio_id_indie }} 
+              {% endif %} 
+            media_content_type: music
+
+    # TURN OFF by input_boolean
+    - conditions:
+        condition: and
+        conditions:
+          - condition: trigger
+            id: "switch_on_off"
+          - "{{ is_state(_switch_player, 'off') }}"
+      sequence:
+        - service: media_player.media_stop
+          target:
+            entity_id: !input target_player
+          data: {}
+        - service: media_player.clear_playlist
+          target:
+            entity_id: !input target_player
+          data: {}
+
+    # CHANGE radio_station by drop down
+    - conditions:
+        condition: and
+        conditions:
+          - condition: trigger
+            id: "change"
+          - "{{ is_state(_media_player,'playing') }}"
+      sequence:
+        - service: media_player.play_media
+          target: 
+            entity_id: !input target_player
+          data:
+            #link content of drop down menu with web radio stations
+            media_content_id: >
+              {% set station = states(_radio_station) %}
+              {% if station == "SRF3" %} {{ _radio_id_srf3 }}
+              {% elif station == "Vintage" %} {{ _radio_id_vintage }} 
+              {% elif station == "Indie" %} {{ _radio_id_indie }} 
+              {% endif %} 
+            media_content_type: music
